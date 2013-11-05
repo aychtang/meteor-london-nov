@@ -1,0 +1,177 @@
+ <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="utf-8">
+    <title>Backbone Example</title>
+    <style>
+		ul {
+		list-style: none;
+		}
+
+		#leaderboard {
+		width: 600px;
+		margin: 0 auto;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+		font-weight: 200;
+		}
+
+		.name {
+		display: inline-block;
+		width: 300px;
+		padding: 10px 20px;
+		font-size: 2em;
+		}
+
+		.score {
+		display: inline-block;
+		width: 100px;
+		text-align: right;
+		font-size: 2em;
+		font-weight: bold;
+		color: #777;
+		}
+
+		.selected > .score {
+		color: black;
+		}
+
+		#detail {
+		width: 600px;
+		margin: 20px auto;
+		font-weight: bold;
+		font-size: 2em;
+		border-style: dashed none none none;
+		border-color: #ccc;
+		border-width: 4px;
+		padding-left: 120px;
+		padding-top: 40px;
+		}
+
+		.selected {
+		background: yellow;
+		}
+
+		#name {
+		font-family: sans-serif;
+		}
+	</style>
+	</head>
+	<body>
+		<div id="leaderboard">
+		</div>
+		<div id="detail">
+			<div id="name"></div>
+			<button id="score">Give 5 points</div>
+		</div>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+	<script src="http://ajax.cdnjs.com/ajax/libs/underscore.js/1.1.6/underscore-min.js"></script>
+	<script src="http://ajax.cdnjs.com/ajax/libs/backbone.js/0.3.3/backbone-min.js"></script>
+	<script>
+
+	var Person = Backbone.Model;
+	var names = ["Ada Lovelace", "Grace Hopper", "Marie Curie", "Carl Friedrich Gauss", "Nikola Tesla", "Claude Shannon"];
+
+	var Leaderboard = Backbone.Collection.extend({
+		model: Person,
+		initialize: function() {
+			this.selected = null;
+		},
+		select: function(model) {
+			this.selected = model;
+			this.trigger('select');
+		},
+		getSelected: function() {
+			return this.selected;
+		},
+		comparator: function(person) {
+			return -person.get('score');
+		}
+	});
+
+	var lb = new Leaderboard();
+	for (var i = 0; i < names.length; i++) {
+		lb.add(new Person({name: names[i], score: ~~(Math.random() * 100)}));
+	}
+
+	var PersonView = Backbone.View.extend({
+		tagName: 'li',
+		events: {
+			'click': 'select'
+		},
+		initialize: function() {
+			_.bindAll(this, 'render', 'select');
+			this.model.bind('change', this.render);
+			this.collection.bind('select', this.render);
+		},
+		render: function() {
+			$(this.el).empty();
+			$(this.el).removeClass('selected');
+			$(this.el).append(
+				'<span class="name">'+ this.model.get('name') +
+				'</span> <span class="score">'+ this.model.get('score') +
+				'</span>'
+			);
+			this.model === this.collection.getSelected() && $(this.el).addClass('selected');
+			return this;
+		},
+		select: function() {
+			this.collection.select(this.model);
+		}
+	});
+
+	var BoardView = Backbone.View.extend({
+		el: $('#leaderboard'),
+		initialize: function() {
+			_.bindAll(this, 'render', 'addPerson');
+			this.collection = lb;
+			this.collection.bind('change', this.render);
+			this.render();
+		},
+		render: function() {
+			var self = this;
+			$(this.el).empty();
+			$(this.el).append("<ul></ul>");
+			_(this.collection.models).each(function(person) {
+				self.addPerson(person);
+			}, this);
+		},
+		addPerson: function(person) {
+			var itemView = new PersonView({
+				model: person,
+				collection: this.collection
+			});
+			$('ul', this.el).append(itemView.render().el);
+		}
+	});
+
+	var DetailView = Backbone.View.extend({
+		el: $('#detail'),
+		events: {
+			'click #score': 'addPoints'
+		},
+		initialize: function() {
+			_.bindAll(this, 'render', 'addPoints');
+			this.collection = lb;
+			this.collection.bind('select', this.render);
+			this.render();
+		},
+		render: function() {
+		$('#name').empty();
+			var currentModel = this.currentModel = this.collection.getSelected();
+			var name = currentModel && currentModel.get('name');
+			$('#name').append(name ? name: 'click to select a player');
+		},
+		addPoints: function() {
+		var currentScore = this.currentModel.get('score');
+			this.currentModel.set({score: currentScore + 5});
+			this.collection.sort();
+			this.collection.trigger('change');
+		}
+	});
+
+		var leaderboard = new BoardView();
+		var details = new DetailView();
+
+    </script>
+  </body>
+  </html>
