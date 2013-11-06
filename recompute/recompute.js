@@ -25,21 +25,13 @@ var Computation = function(f) {
 // While running the function, ensure that the current computation is this.
 // After finished running, remove reference to this computation.
 Computation.prototype.compute = function() {
-	currentComputation = this;
-	this.func();
-	currentComputation = null;
+
 };
 
 // Adds to flush list.
+// Requires flush.
+// Runs any callbacks required.
 Computation.prototype.invalidate = function() {
-	if (!contains(toFlush, this)) {
-		toFlush.push(this);
-	}
-	requireFlush();
-	for (var i = 0; i < this.onInvalidateCallbacks; i++) {
-		this.onInvalidateCallbacks[i]();
-	}
-	this.onInvalidateCallbacks = [];
 };
 
 // Tracks dependant functions and invalidates upon change.
@@ -47,19 +39,14 @@ var Dependency = function() {
 	this.dependents = {};
 };
 
+// Tracks current computation.
 // Adds current computation to list of dependants of this dependency.
+// Removes the dependency on invalidation through calback.
 Dependency.prototype.depend = function() {
-	var self = this;
 
-	if (computation = currentComputation) {
-		computationId = computation.id;
-		this.dependents[computationId] = computation;
-		computation.onInvalidateCallbacks.push(function() {
-			delete self.dependents[computationId];
-		});
-	}
 };
 
+// Invalidates all dependants.
 Dependency.prototype.changed = function() {
 	for (dep in this.dependents) {
 		this.dependents[dep].invalidate();
