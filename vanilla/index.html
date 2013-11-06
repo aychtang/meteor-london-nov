@@ -1,9 +1,9 @@
  <!DOCTYPE html>
   <html>
   <head>
-    <meta charset="utf-8">
-    <title>Backbone Example</title>
-    <style>
+	<meta charset="utf-8">
+	<title>Backbone Example</title>
+	<style>
 		ul {
 		list-style: none;
 		}
@@ -52,7 +52,7 @@
 		}
 
 		#name {
-		font-family: sans-serif;
+		font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 		}
 	</style>
 	</head>
@@ -69,7 +69,6 @@
 	<script>
 
 	var Person = Backbone.Model;
-	var names = ["Ada Lovelace", "Grace Hopper", "Marie Curie", "Carl Friedrich Gauss", "Nikola Tesla", "Claude Shannon"];
 
 	var Leaderboard = Backbone.Collection.extend({
 		model: Person,
@@ -89,6 +88,8 @@
 	});
 
 	var lb = new Leaderboard();
+
+	var names = ["Ada Lovelace", "Grace Hopper", "Marie Curie", "Carl Friedrich Gauss", "Nikola Tesla", "Claude Shannon"];
 	for (var i = 0; i < names.length; i++) {
 		lb.add(new Person({name: names[i], score: ~~(Math.random() * 100)}));
 	}
@@ -156,21 +157,21 @@
 			this.render();
 		},
 		render: function() {
-		$('#name').empty();
+			$('#name').empty();
 			var currentModel = this.currentModel = this.collection.getSelected();
 			var name = currentModel && currentModel.get('name');
-			$('#name').append(name ? name: 'click to select a player');
+			$('#name').append(name ? name: 'Click to select a player');
 		},
 		addPoints: function() {
-		var currentScore = this.currentModel.get('score');
+			var currentScore = this.currentModel.get('score');
 			this.currentModel.set({score: currentScore + 5});
 			this.collection.sort();
 			this.collection.trigger('change');
 		}
 	});
 
-		var leaderboard = new BoardView();
-		var details = new DetailView();
+	var leaderboard = new BoardView();
+	var details = new DetailView();
 
     </script>
   </body>
