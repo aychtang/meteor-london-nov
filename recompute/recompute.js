@@ -10,7 +10,7 @@ var contains = function(array, obj) {
 };
 
 // autorun creates new computation and runs once.
-autorun = function(f) {
+var autorun = function(f) {
 	var c = new Computation(f);
 	c.compute();
 };
