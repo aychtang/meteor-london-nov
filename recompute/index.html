@@ -1,0 +1,18 @@
+<!doctype html>
+<html>
+    <head>
+        <title>Autorun use case</title>
+    </head>
+    <body>
+        <p id="number"></p>
+        <script src="recompute.js"></script>
+        <script src="session.js"></script>
+        <script>
+            var element = document.getElementById('number');
+            autorun(function() {
+                element.innerHTML = Session.get('number') || 'Not yet implemented.';
+            });
+            Session.set('number', 5);
+        </script>
+    </body>
+</html>

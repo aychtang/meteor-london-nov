@@ -24,5 +24,5 @@ Session.set = function(key, value) {
 	if (value === oldValue) return;
 
 	this.keys[key] = value;
-	this.keyDeps[key].changed();
+	this.keyDeps[key] && this.keyDeps[key].changed();
 };
