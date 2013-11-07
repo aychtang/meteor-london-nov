@@ -21,7 +21,7 @@ var contains = function(array, obj) {
 	}
 };
 
-// autorun creates new computation and runs once.
+// autorun creates new computation and computes once.
 var autorun = function(f) {
 	var c = new Computation(f);
 	c.compute();
@@ -36,15 +36,12 @@ var Computation = function(f) {
 
 // While running the function, ensure that the current computation is this.
 // After finished running, remove reference to this computation.
-Computation.prototype.compute = function() {
-};
+Computation.prototype.compute = function() {};
 
 // Adds to flush list.
 // Requires flush.
 // Runs any callbacks required.
-Computation.prototype.invalidate = function() {
-
-};
+Computation.prototype.invalidate = function() {};
 
 // Tracks dependant functions and invalidates upon change.
 var Dependency = function() {
@@ -54,9 +51,7 @@ var Dependency = function() {
 // Tracks current computation.
 // Adds current computation to list of dependants of this dependency by ID.
 // Removes the dependency on invalidation through calback.
-Dependency.prototype.depend = function() {
-
-};
+Dependency.prototype.depend = function() {};
 
 // Invalidates all dependants.
 Dependency.prototype.changed = function() {
