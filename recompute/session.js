@@ -4,17 +4,17 @@ var Session = {
 	keyDeps: {}
 };
 
+Session.ensureDep = function(key) {
+	if (!this.keyDeps[key]) {
+		this.keyDeps[key] = new Dependency();
+	}
+};
+
 // Make sure the current computation depends on this keys Dependency.
 Session.get = function(key) {
 	this.ensureDep(key);
 	this.keyDeps[key].depend();
 	return this.keys[key];
-};
-
-Session.ensureDep = function(key) {
-	if (!this.keyDeps[key]) {
-		this.keyDeps[key] = new Dependency();
-	}
 };
 
 // Change value if required, and run dependency.changed() on keys dep.

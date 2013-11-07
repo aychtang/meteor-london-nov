@@ -3,6 +3,18 @@ var currentComputation = null;
 var nextId = 0;
 var toFlush = [];
 
+// Computes all required computations on next tick.
+var requireFlush = function() {
+	setTimeout(flush, 0);
+};
+
+var flush = function() {
+	for (var i = 0; i < toFlush.length; i++) {
+		toFlush[i].compute();
+	}
+	toFlush = [];
+};
+
 var contains = function(array, obj) {
 	for (var i = 0; i < array.length; i++) {
 		if (array[i] === obj) return true;
@@ -25,13 +37,13 @@ var Computation = function(f) {
 // While running the function, ensure that the current computation is this.
 // After finished running, remove reference to this computation.
 Computation.prototype.compute = function() {
-
 };
 
 // Adds to flush list.
 // Requires flush.
 // Runs any callbacks required.
 Computation.prototype.invalidate = function() {
+
 };
 
 // Tracks dependant functions and invalidates upon change.
@@ -40,7 +52,7 @@ var Dependency = function() {
 };
 
 // Tracks current computation.
-// Adds current computation to list of dependants of this dependency.
+// Adds current computation to list of dependants of this dependency by ID.
 // Removes the dependency on invalidation through calback.
 Dependency.prototype.depend = function() {
 
@@ -48,21 +60,8 @@ Dependency.prototype.depend = function() {
 
 // Invalidates all dependants.
 Dependency.prototype.changed = function() {
-	for (dep in this.dependents) {
+	for (var dep in this.dependents) {
 		this.dependents[dep].invalidate();
 	}
 };
-
-// Computes all required computations on next tick.
-var requireFlush = function() {
-	setTimeout(flush, 0);
-};
-
-var flush = function() {
-	for (var i = 0; i < toFlush.length; i++) {
-		toFlush[i].compute();
-	}
-	toFlush = [];
-};
-
 
